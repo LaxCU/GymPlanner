@@ -150,17 +150,6 @@ CREATE TABLE GroupFitnessBookings(
     FOREIGN KEY(billing_id) REFERENCES Billings(billing_id)
 );
 
--- Sample for Billing
-INSERT INTO Billings (user_id, billing_amount)
-VALUES
-(1, 60),
-
--- Sample data for Group Fitness Bookings
-INSERT INTO GroupFitnessBookings (user_id, group_id, 1)
-VALUES
-(1, 1,1)
-
-
 -- Table for Rooms 
 CREATE TABLE Rooms(
     room_id SERIAL PRIMARY KEY,
