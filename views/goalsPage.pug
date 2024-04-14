@@ -35,8 +35,8 @@ html(lang="en")
               input(type='number', id='muscleMass', name='muscleMass', min='0', step='0.1',value=(metricGoal ? metricGoal.target_muscle_mass : ''))
               label(for='heartRate') Resting Heart Rate (bpm):
               input(type='number', id='heartRate', name='heartRate', min='0', step='1',value=(metricGoal ? metricGoal.target_heart_rate : ''))
-              label(for='bloodPressure') Blood Pressure (mmHg):
-              input(type='text', id='bloodPressure', name='bloodPressure', pattern='[0-9]{2,3}/[0-9]{2,3}', placeholder='e.g., 120/80', value=(metricGoal ? metricGoal.target_blood_pressure : ''))
+              //- label(for='bloodPressure') Blood Pressure (mmHg):
+              //- input(type='text', id='bloodPressure', name='bloodPressure', pattern='[0-9]{2,3}/[0-9]{2,3}', placeholder='e.g., 120/80', value=(metricGoal ? metricGoal.target_blood_pressure : ''))
               br
               div.button-container
                 button.button(type="submit") Submit
@@ -59,7 +59,6 @@ html(lang="en")
         const fitnessGoalsData = !{JSON.stringify(fitnessGoals)}; 
         const metricGoalData = !{JSON.stringify(metricGoal)};
     script(src='../client/userGoals.js')
-    footer
-      p © 2024 Fitness Club. All rights reserved.
+    include footer.pug
 
 

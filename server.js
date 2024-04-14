@@ -100,7 +100,7 @@ app.post("/metrics", updateMetrics);
 //Routines
 app.get("/routines", sendRoutinesPage);
 app.post("/routines", createRoutine);
-app.post("/routines/:id", updateRoutine);
+app.post("/routine/:id", updateRoutine);
 app.delete("/routines/:id", deleteRoutine);
 
 //Goals
@@ -168,9 +168,9 @@ app.get("/search", async (req, res) => {
   try {
     // Query PostgreSQL database for members
     const queryText = `
-      SELECT username 
+      SELECT first_name, last_name 
       FROM users 
-      WHERE LOWER(username) LIKE LOWER($1)
+      WHERE LOWER(first_name) LIKE LOWER($1)
     `;
     const result = await clientDB.query(queryText, [`%${query}%`]);
 
@@ -276,9 +276,13 @@ async function sendTrainerSchedulePage(req, res) {
 
   let bookings = await clientDB.query(sqlQuery, [req.session.user.trainer_id]);
 
+  //Get trainer's trainer id
+  let sqlQuery2 = "SELECT trainer_id FROM trainers WHERE user_id = $1";
+  let trainerId = await clientDB.query(sqlQuery2, [req.session.user.user_id]);
+
   let availability = await clientDB.query(
     "SELECT * FROM TrainerAvailability where trainer_id = $1",
-    [req.session.user.user_id]
+    [trainerId.rows[0].trainer_id]
   );
 
   res.render("trainersSchedule", {
@@ -297,7 +301,7 @@ async function sendRoomBookingPage(req, res) {
   const availableRooms = result.rows;
 
   const bookingsQuery =
-    "SELECT * FROM Bookings WHERE booking_date > CURRENT_DATE ORDER BY booking_date ASC, start_time ASC";
+    "SELECT * FROM RoomBookings WHERE booking_date > CURRENT_DATE ORDER BY booking_date ASC, start_time ASC";
   const bookingsResult = await clientDB.query(bookingsQuery);
   const bookings = bookingsResult.rows;
 
@@ -370,6 +374,11 @@ async function sendGroupFitnessPage(req, res) {
     req.session.user.user_id,
   ]);
 
+  let trainersQuery =
+    "SELECT t.*, u.first_name, u.last_name FROM Trainers t INNER JOIN Users u on t.user_id = u.user_id";
+
+  let trainersData = await clientDB.query(trainersQuery);
+
   console.log(result.rows);
   console.log(userBookings.rows);
 
@@ -377,6 +386,7 @@ async function sendGroupFitnessPage(req, res) {
     classes: result.rows,
     userBookings: userBookings.rows,
     isAdmin: req.session.user.isAdmin,
+    trainers: trainersData.rows,
   });
 }
 
@@ -687,7 +697,7 @@ async function submitRoomBooking(req, res) {
 
   // We check if the room booked has already been booked for the same date and time
   const queryText = `
-    SELECT * FROM Bookings WHERE room_id = $1 AND booking_date = $2 AND start_time < $3  AND end_time > $4
+    SELECT * FROM RoomBookings WHERE room_id = $1 AND booking_date = $2 AND start_time < $3  AND end_time > $4
   `;
   const result = await clientDB.query(queryText, [
     room_id,
@@ -702,7 +712,7 @@ async function submitRoomBooking(req, res) {
   } else {
     //Insert the booking into the database
     await clientDB.query(
-      "INSERT INTO bookings (booking_date, start_time, end_time, booking_comment, room_id) VALUES ($1, $2, $3, $4, $5)",
+      "INSERT INTO RoomBookings (booking_date, start_time, end_time, booking_comment, room_id) VALUES ($1, $2, $3, $4, $5)",
       [booking_date, start_time, end_time, booking_comment, room_id]
     );
   }
@@ -719,7 +729,7 @@ async function deleteRoomBooking(req, res) {
   const bookingId = req.params.id;
   console.log(bookingId);
   //Delete the booking from the database
-  await clientDB.query("DELETE FROM bookings WHERE booking_id = $1", [
+  await clientDB.query("DELETE FROM RoomBookings WHERE booking_id = $1", [
     bookingId,
   ]);
 
@@ -740,7 +750,7 @@ async function updateRoomBooking(req, res) {
 
   //CHeck if the room is already booked for the selected time
   const queryText = `
-    SELECT * FROM Bookings WHERE booking_id != $5 AND room_id = $1 AND booking_date = $2 AND start_time < $3  AND end_time > $4
+    SELECT * FROM RoomBookings WHERE booking_id != $5 AND room_id = $1 AND booking_date = $2 AND start_time < $3  AND end_time > $4
   `;
   const result = await clientDB.query(queryText, [
     room_id,
@@ -756,7 +766,7 @@ async function updateRoomBooking(req, res) {
 
   //Update the booking in the database
   await clientDB.query(
-    "UPDATE bookings SET booking_date = $1, start_time = $2, end_time = $3, booking_comment = $4, room_id = $5 WHERE booking_id = $6",
+    "UPDATE RoomBookings SET booking_date = $1, start_time = $2, end_time = $3, booking_comment = $4, room_id = $5 WHERE booking_id = $6",
     [booking_date, start_time, end_time, booking_comment, room_id, bookingId]
   );
 
@@ -1271,10 +1281,26 @@ async function registerGroupFitnessBooking(req, res) {
   const group_id = req.params.id;
   const user_id = req.session.user.user_id;
 
-  let sqlQuery =
-    "INSERT INTO GroupFitnessBookings (user_id, group_id) VALUES ($1, $2)";
+  //get the group fitness class
+  let groupQuery = "SELECT * FROM GroupFitness WHERE group_id = $1";
+  let groupResult = await clientDB.query(groupQuery, [group_id]);
 
-  await clientDB.query(sqlQuery, [user_id, group_id]);
+  let group = groupResult.rows[0];
+
+  //Create Billing & return the billling_id
+  let billingQuery =
+    "INSERT INTO Billings (user_id, billing_amount) VALUES ($1, $2) RETURNING billing_id";
+  let billingResult = await clientDB.query(billingQuery, [
+    user_id,
+    group.group_cost,
+  ]);
+
+  let billing_id = billingResult.rows[0].billing_id;
+
+  let sqlQuery =
+    "INSERT INTO GroupFitnessBookings (user_id, group_id, billing_id) VALUES ($1, $2, $3)";
+
+  await clientDB.query(sqlQuery, [user_id, group_id, billing_id]);
 
   res.status(200).send("Booking created successfully");
 }
@@ -1287,15 +1313,16 @@ async function deleteGroupFitnessBooking(req, res) {
   const group_id = req.params.id;
   const user_id = req.session.user.user_id;
 
-  //Get billing_id
-  let billingQuery = "SELECT billing_id FROM GroupFitnessBookings WHERE user_id = $1 AND group_id = $2";
-  let billingResult = await clientDB.query(billingQuery, [user_id, group_id]);
-  
-
+  //Get billing_id for the booking
   let sqlQuery =
-    "DELETE FROM GroupFitnessBookings WHERE user_id = $1 AND group_id = $2";
+    "DELETE FROM GroupFitnessBookings WHERE user_id = $1 AND group_id = $2 RETURNING billing_id";
 
-  await clientDB.query(sqlQuery, [user_id, group_id]);
+  let billing_id = await clientDB.query(sqlQuery, [user_id, group_id]);
+
+  //Delete the billing record
+  await clientDB.query("DELETE FROM Billings WHERE billing_id = $1", [
+    billing_id.rows[0].billing_id,
+  ]);
 
   res.status(200).send("Booking deleted successfully");
 }

@@ -3,38 +3,50 @@ html
   head
     title Dashboard
     link(rel='stylesheet', href='/styles/dashboard.css')
-    script.
-      function loadContent(url) {
-        fetch(url)
-          .then(response => response.text())
-          .then(data => document.getElementById('content').innerHTML = data)
-          .catch(error => console.error('Error loading content:', error));
-      }
   body
     header
       h1 Hi #{user.first_name } <!-- Display user's name -->
       div.header-buttons
-        a(href='javascript:void(0)', onclick="loadContent('/profile')") Profile
+        a(href='/profile',target="_blank", onclick="") Profile
         a(href='/logout') Logout <!-- Logout link -->
+
     main
       h3 Welcome to you Fitness Dashboard
       p
       nav
         ul
-          li
-            a(href='javascript:void(0)', onclick="loadContent('/metrics')") Metrics  
-          li
-            a(href='javascript:void(0)', onclick="loadContent('/Goals')") Goals
-          li
-            a(href='javascript:void(0)', onclick="loadContent('/bookings')") Bookings
-          li
-            a(href='javascript:void(0)', onclick="loadContent('/routines')") Routines
-          li
-            a(href='javascript:void(0)', onclick="loadContent('/achievements')") Achievements
+          if(user.isAdmin)
+            li
+              a(href='/userSearch', target="_blank",) Users
+            li 
+              a(href='/groupFitness', target="_blank",) Classes
+            li 
+              a(href='/bookings', target="_blank",) Room Booking
+            li 
+              a(href='/equipment', target="_blank",) Equipment
+          else if(user.isTrainer)
+            li 
+              a(href='/schedule', target="_blank",) Manage your Schedule 
+            li
+              a(href='/userSearch', target="_blank",) Users
+          else
+            li
+              a(href='/metrics', target="_blank", ) Metrics  
+            li
+              a(href='/goals', target="_blank", ) Goals
+            li
+              a(href='/health', target="_blank", ) Health Stats
+            li
+              a(href='/routines', target="_blank",) Routines
+            li
+              a(href='/achievements', target="_blank",) Achievements
+            li
+              a(href='/groupFitness', target="_blank",) Group Fitness
+            li
+              a(href='/training', target="_blank",) Personal Training
       br
       div#content
         // Content will be dynamically loaded here
-    footer
-      p © 2024 Fitness Club. All rights reserved.
+    include footer.pug
 
 

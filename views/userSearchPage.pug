@@ -34,7 +34,7 @@ html
                 const ul = document.createElement('ul');
                 data.forEach(member => {
                   const li = document.createElement('li');
-                  li.textContent = `${member.username}`;
+                  li.textContent = `${member.first_name} ${member.last_name}`;
                   ul.appendChild(li);
                 });
                 searchResults.appendChild(ul);
