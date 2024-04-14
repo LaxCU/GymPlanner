@@ -1,0 +1,49 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Gym Dashboard
+    main
+      if (!equipments)
+        h4 No Equipment found.
+      else
+        h2 Here are your equipment: 
+        .card-container
+            each equipment in equipments
+                div.card(id= equipment.equipment_id)
+                    .card-header Equipment Details
+                    .card-content 
+                        p Equipment Name: #{equipment.equipment_name}
+                        p Description: #{equipment.equipment_description}
+                    .card-actions 
+                        button.button(id= equipment.equipment_id) Update 
+                        //- button.button.button-cancel(id= equipment.equipment_id) Delete           
+      br
+      //New Booking Overlay
+      div.overlay#maintenanceOverlay
+        .overlay-content 
+            h2#overlaytitle Equipment Maintenance
+            form#maintenanceForm(action="/matainence", method="POST")
+                br
+                label(for="equipment_name", id="equipment_name") Equipment:
+                label(for="equipment_id", id="equipment_id") ID:
+                br
+                label(for="status") Is equipment working?:
+                select(id="equipment_status", name="equipment_status", required)
+                    option(value=1, default)= "Yes"
+                    option(value=0)= "No"
+                br
+                label(for="comments") Comments:
+                textarea#maintainance_comment(name="booking_comment", placeholder="Enter comments", rows="5", )
+                div.button-container
+                    button.button(type="submit") Submit
+                    button.button.button-cancel(type="button") Cancel
+      
+    script. 
+        const equipmentData = !{JSON.stringify(equipments)}; 
+    script(src='../client/equipment.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

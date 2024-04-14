@@ -1,0 +1,60 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Gym Dashboard
+    main
+      button#createBooking.button Create New Booking
+      if (!bookings)
+        h4 No Bookings found.
+        br
+        p Create a new booking by clicking the button below.
+      else
+        h2 Here are your bookings: 
+        .card-container
+            each booking in bookings
+                div.card(id= booking.booking_id)
+                    .card-header Booking Details 
+                    .card-content 
+                        p Date: #{booking.booking_date.toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        p Time: #{booking.start_time} - #{booking.end_time}
+                        p Room: #{availableRooms.find(room => room.room_id === booking.room_id).room_name}
+                        p Comments: #{booking.booking_comment}
+                    .card-actions 
+                        button.button(id= booking.booking_id) Edit 
+                        button.button.button-cancel(id= booking.booking_id) Delete           
+      br
+      //New Booking Overlay
+      div.overlay#bookingOverlay
+        .overlay-content 
+            h2#overlaytitle Create Room Booking
+            form#bookingForm(action="/bookings", method="POST")
+                br
+                label(for="date") Date:
+                input(type="date", id="booking_date", name="booking_date", required)
+                label(for="time") Start Time:
+                input(type="time", id="start_time", name="start_time", required)
+                label(for="time") End Time:
+                input(type="time", id="end_time", name="end_time", required)
+                label(for="room") Room:
+                select(id="room_id", name="room_id", required)
+                    if (!availableRooms)
+                        option(value="") No rooms available
+                    else
+                        each room in availableRooms
+                            option(value=room.room_id)= room.room_name + " - Capacity " + room.room_capacity
+                br 
+                label(for="comments") Comments:
+                textarea#booking_comment(name="booking_comment", placeholder="Enter comments", rows="5", )
+                div.button-container
+                    button.button(type="submit") Submit
+                    button.button.button-cancel(type="button") Cancel
+      
+    script. 
+        const bookingsData = !{JSON.stringify(bookings)}; 
+    script(src='../client/roomBooking.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

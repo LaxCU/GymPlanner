@@ -1,0 +1,22 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+
+  body
+    header
+      h1 Gym Dashboard
+    main
+      div.links-container
+        a(href="/heathStatChart?type=weight", class="progress-link", target="_blank") View Weight Progress
+        br
+        a(href="/heathStatChart?type=body_fat", class="progress-link", target="_blank") View Body Fat Progress
+        br
+        a(href="/heathStatChart?type=muscle_mass", class="progress-link", target="_blank") View Muscle Mass Progress
+        br
+        a(href="/heathStatChart?type=heart_rate", class="progress-link", target="_blank") View Heart Rate Progress
+        br
+        //- a(href="/heathStatChart?type=blood_pressure", class="progress-link", target="_blank") View Blood Pressure Progress
+    footer
+      p © 2024 Fitness Club. All rights reserved.

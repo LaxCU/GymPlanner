@@ -1,0 +1,59 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Gym Dashboard
+    main
+      button#updateAvailability.button Update Availability
+
+      if (!bookings)
+        h4 No Bookings found.
+      else
+        h2 Here are your bookings: 
+        .card-container
+            each booking in bookings
+                div.card(id= booking.training_id)
+                    .card-header Booking Details 
+                    .card-content 
+                        p Date: #{booking.training_date.toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        p Time: #{booking.start_time} - #{booking.end_time}
+                        //- p Trainer: #{req.session.user}
+                        p Client: #{booking.first_name} #{booking.last_name}
+                        p Duration: #{booking.duration} hours
+                        p Comments: #{booking.training_comment}
+                    //- .card-actions 
+                    //-     button.button(id= booking.training_id) Edit 
+                    //-     button.button.button-cancel(id= booking.training_id) Delete           
+      br
+      div.overlay#scheduleOverlay
+        .overlay-content 
+            h2#overlaytitle Update Your Schedule
+            form#scheduleForm(action="/schedule", method="POST")
+                br
+                label(for="status") Day of the Week:
+                select(id="day_of_week", name="day_of_week", required)
+                    option(value=1, default)= "Monday"
+                    option(value=2)= "Tuesday"
+                    option(value=3)= "Wednesday"
+                    option(value=4)= "Thursday"
+                    option(value=5)= "Friday"
+                    option(value=6)= "Saturday"
+                    option(value=7)= "Sunday"
+                br
+                label(for="time") Start Time:
+                input(type="time", id="start_time", name="start_time", required)
+                label(for="time") End Time:
+                input(type="time", id="end_time", name="end_time", required)
+                div.button-container
+                    button.button(type="submit") Update
+                    button.button.button-cancel#cancelButton(type="button") Cancel
+      
+    script. 
+        const bookingsData = !{JSON.stringify(bookings)}; 
+        const scheduleData = !{JSON.stringify(schedule)};
+    script(src='../client/schedule.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

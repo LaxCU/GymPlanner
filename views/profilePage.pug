@@ -1,0 +1,24 @@
+doctype html
+html
+  head
+    title Update Personal Information
+    link(rel='stylesheet', href='/styles/profile.css')
+    
+  body
+    header
+      h1 Update Personal Information
+    main
+      form(action='/profile', method='POST')
+        label(for='first_name') First Name: 
+        input(type='text', id='first_name', name='first_name', placeholder='Enter your name: ', value=user.first_name)
+        label(for='last_name') Last Name:
+        input(type='text', id='last_name', name='last_name', placeholder='Enter your last name', value=user.last_name)
+        label(for='password') Password:
+        input(type='password', id='password', name='password', placeholder='Enter your new password')
+        label(for='email') Email: 
+        input(type='email', id='email', name='email', placeholder='Enter your email', value=user.email)
+        label(for='address') Address:
+        input(type='text', id='address', name='address', placeholder='Enter your address', value=user.address)
+        label(for='phone') Phone:
+        input(type='tel', id='phone', name='phone', placeholder='Enter your phone number', value=user.phone)
+        button(type='submit') Update Information

@@ -1,0 +1,28 @@
+doctype html
+html(lang="en")
+  head
+    title Active Goals
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Your Achievements
+    main
+      if (progress)
+        h2 Your Metric Goal Progress
+        each item in progress
+          li #{item}
+      br
+      br
+      if (fitnessGoals)
+        h2 Your Completed Fitness Goals
+        each goal in fitnessGoals
+          li #{goal.goal_title}
+       
+    script. 
+        const fitnessGoalsData = !{JSON.stringify(fitnessGoals)}; 
+        const metricGoalData = !{JSON.stringify(metricGoal)};
+    script(src='../client/userGoals.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.
+
+

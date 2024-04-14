@@ -1,0 +1,45 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Gym Dashboard
+    main
+      if (!routines)
+        h4 No routines found.
+        p Create a new routine by clicking the button below.
+      else
+        h2 Here are your Routines: 
+        .card-container
+            each routine in routines
+                div.card(id= routine.routine_id)
+                    .card-header #{routine.routine_name}
+                    .card-content 
+                        p Description: #{routine.routine_description}
+                    .card-actions 
+                        button.button(id= routine.routine_id) Edit 
+                        button.button.button-cancel(id= routine.routine_id) Delete
+      br
+      button#createRoutine.button Create New Routine
+
+      //Overlay
+      div.overlay#routineOverlay
+        .overlay-content
+          h2#routineTitle Enter Routine
+          form#routineForm(action="/routines", method="POST")
+            br
+            label(for='routine_name') Enter text (max 50 characters):
+            input(type='text', id='routine_name', name='routine_name', maxlength='50', required)
+            label(for='routine_description') Enter routine details/description:
+            textarea#routine_description(name="routine_description", placeholder="Enter routine", rows="5", required)
+            br
+            div.button-container 
+              button.button#submit(type="submit") Submit
+              button.button.button-cancel#cancelButton(type="button") Cancel
+    script. 
+        const routinesData = !{JSON.stringify(routines)};       
+    script(src='../client/routines.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

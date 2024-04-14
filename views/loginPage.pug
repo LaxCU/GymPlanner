@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    title Login
+    link(rel='stylesheet', href='/styles/profile.css')
+
+  body
+    header
+      h1 Login
+    main
+      form(action='/login', method='POST')
+        label(for='email') User Email:
+        input(type='email', id='email', name='email', required)
+        br
+        label(for='password') Password:
+        input(type='password', id='password', name='password', required)
+        br
+        if error
+          p.error Error: Invalid email or password.
+        button(type='submit') Login
+    footer
+      p © 2024 Fitness Club. All rights reserved.

@@ -1,0 +1,15 @@
+
+/* Styles for booking tiles */
+.booking-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.booking-box {
+  width: calc(33.33% - 20px); /* Set width for each tile, adjust as needed */
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+}

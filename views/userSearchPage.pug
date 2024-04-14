@@ -1,0 +1,52 @@
+doctype html
+html
+  head
+    title Member Search
+    style
+      // Add your CSS styles here
+  body
+    h1 Trainer Member Search
+    
+    // Search Form
+    form(action="/search", method="GET")
+      input(type="text", id="searchInput", placeholder="Search members...")
+      // Results will be displayed here
+      div(id="searchResults")
+    
+    // JavaScript for client-side interaction
+    script.
+      // Function to handle search as user types
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+      
+      searchInput.addEventListener('input', function(event) {
+        const query = event.target.value.trim();
+        if (query !== '') {
+          // Send AJAX request to the server
+          fetch(`/search?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+              // Clear previous results
+              searchResults.innerHTML = '';
+              
+              // Display new results
+              if (data.length > 0) {
+                const ul = document.createElement('ul');
+                data.forEach(member => {
+                  const li = document.createElement('li');
+                  li.textContent = `${member.username}`;
+                  ul.appendChild(li);
+                });
+                searchResults.appendChild(ul);
+              } else {
+                const p = document.createElement('p');
+                p.textContent = 'No members found.';
+                searchResults.appendChild(p);
+              }
+            })
+            .catch(error => console.error('Error fetching search results:', error));
+        } else {
+          // Clear results if search input is empty
+          searchResults.innerHTML = '';
+        }
+      });

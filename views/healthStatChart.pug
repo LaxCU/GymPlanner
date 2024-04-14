@@ -1,0 +1,17 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+  body
+    header
+      h1 Gym Dashboard
+    main
+      canvas#routineChart(width="200", height="400")
+    script.
+        const chartLabels = !{JSON.stringify(labels)};
+        const chartData = !{JSON.stringify(values)};
+        const label = !{JSON.stringify(dataLabel)};
+    script(src='../client/healthStatChart.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

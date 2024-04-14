@@ -1,0 +1,70 @@
+/* Body styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+}
+
+/* Header styles */
+header {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Main styles */
+main {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px; /* Add margin to create a gap */
+}
+
+/* Form styles */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Style label and input elements */
+label {
+  font-weight: bold;
+  margin-bottom: 1px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Flexbox layout for label and input */
+label,
+input {
+  flex: 1; /* Take up remaining space */
+}
+
+/* Adjust margin between label and input */
+label + input {
+  margin-top: 5px; /* Add a small gap between label and input */
+}
+
+button[type="submit"] {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}

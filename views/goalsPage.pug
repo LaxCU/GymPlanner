@@ -1,0 +1,65 @@
+doctype html
+html(lang="en")
+  head
+    title Active Goals
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Fitness Club Goals
+    main
+      if (metricGoal)
+        button#createMetricGoals.button View/Update Metric Goal 
+      else 
+        button#createMetricGoals.button Create Metric Goal
+      button#createFreeformGoals.button Create Freeform Goal
+
+      if (fitnessGoals)
+        h4 Your current active freeform goals.
+        each goal in fitnessGoals
+          li(id=`goal-${goal.id}`, class="goal-item") #{goal.goal_title}
+      else
+        h4 No freeform goals found.
+        br
+        p Create a new freeform goal by clicking the button above.
+
+      div.overlay#metricOverlay
+        .overlay-content 
+            h2#overlaytitle Create Metric Goal
+            br
+            form#metricForm(action='/metricGoal', method='POST')
+              label(for='weight') Weight (kg):
+              input(type='number', id='weight', name='weight', min='0', step='0.1', value=(metricGoal ? metricGoal.target_weight : ''))
+              label(for='bodyFat') Body Fat (%):
+              input(type='number', id='bodyFat', name='bodyFat', min='0', max='100', step='0.1',value=(metricGoal ? metricGoal.target_body_fat : ''))
+              label(for='muscleMass') Muscle Mass (kg):
+              input(type='number', id='muscleMass', name='muscleMass', min='0', step='0.1',value=(metricGoal ? metricGoal.target_muscle_mass : ''))
+              label(for='heartRate') Resting Heart Rate (bpm):
+              input(type='number', id='heartRate', name='heartRate', min='0', step='1',value=(metricGoal ? metricGoal.target_heart_rate : ''))
+              label(for='bloodPressure') Blood Pressure (mmHg):
+              input(type='text', id='bloodPressure', name='bloodPressure', pattern='[0-9]{2,3}/[0-9]{2,3}', placeholder='e.g., 120/80', value=(metricGoal ? metricGoal.target_blood_pressure : ''))
+              br
+              div.button-container
+                button.button(type="submit") Submit
+                button.button.button-cancel(type="button") Cancel
+
+      div.overlay#freeFormOverlay
+        .overlay-content 
+            h2#overlaytitle Create Freeform Goal
+            form#freeformForm(action="/goals", method="POST")
+                br
+                label(for="goal_title") Goal Title:
+                input(type="text", id="goal_title", name="goal_title", required)
+                label(for="goal_description") Goal Description:
+                textarea(id="goal_description" name="goal_description", placeholder="Enter routine", rows="5")
+                div.button-container
+                    button.button(type="submit") Submit
+                    button.button.button-cancel(type="button") Cancel
+       
+    script. 
+        const fitnessGoalsData = !{JSON.stringify(fitnessGoals)}; 
+        const metricGoalData = !{JSON.stringify(metricGoal)};
+    script(src='../client/userGoals.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.
+
+

@@ -1,0 +1,70 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Gym Dashboard
+    main
+      button#createBooking.button Create New Booking
+
+      if (!bookings)
+        h4 No Bookings found.
+      else
+        h2 Here are your bookings: 
+        .card-container
+            each booking in bookings
+                div.card(id= booking.training_id)
+                    .card-header Booking Details 
+                    .card-content 
+                        p Date: #{booking.training_date.toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        p Time: #{booking.start_time} - #{booking.end_time}
+                        p Trainer: #{booking.trainer_first_name} #{booking.trainer_last_name}
+                        //- p Client: #{booking.user_first_name} #{booking.user_last_name}
+                        p Duration: #{booking.duration} minutes
+                        p Comments: #{booking.training_comment}
+                    .card-actions 
+                        button.button(id= booking.training_id) Edit 
+                        button.button.button-cancel(id= booking.training_id) Delete           
+      br
+
+      div.overlay#Overlay
+        .overlay-content 
+            h2#overlaytitle Create your PT Session
+            form#trainingForm(action="/training", method="POST")
+                br
+                label(for="training_date") Date:
+                input(type="date", id="training_date", name="training_date", required)
+                label(for="time") Start Time:
+                input(type="time", id="start_time", name="start_time", required)
+                label(for="duration") Duration:
+                select(id="duration", name="duration", required)
+                    option(value=60, default)= "1 Hour"
+                    option(value=90)= "1 Hour 30 Minutes"
+                    option(value=120)= "2 Hour"
+                    option(value=180)= "2 Hour 30 Minutes"
+                    option(value=180)= "3 Hour"
+                    option(value=210)= "3 Hour 30 Minutes"
+                    option(value=240)= "4 Hour"
+                br
+                label(for="trainer") Trainer:
+                select(id="trainer_id", name="trainer_id", required)
+                    if (!trainers)
+                        option(value="") No trainers available
+                    else
+                        each trainer in trainers
+                            option(value=trainer.trainer_id)= trainer.first_name + " " + trainer.last_name
+                br
+                label(for="training_comment") Comments:
+                textarea#training_comment(name="training_comment", placeholder="Enter comments", rows="5", )
+                div.button-container
+                    button.button(type="submit") Submit
+                    button.button.button-cancel#cancelButton(type="button") Cancel
+      
+    script. 
+        const bookingsData = !{JSON.stringify(bookings)}; 
+        const trainersData = !{JSON.stringify(trainers)};
+    script(src='../client/trainerSession.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

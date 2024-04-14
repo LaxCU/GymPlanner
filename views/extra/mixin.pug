@@ -1,0 +1,25 @@
+mixin bookingsInputForm(routePath)
+    #overlay
+            .overlay-content
+                h2 Enter Room Booking
+                form#bookingForm(action=routePath, method="POST")
+                    br
+                    label(for="date") Date:
+                    input(type="date", id="date", name="date", required)
+                    label(for="time") Start Time:
+                    input(type="time", id="startTime", name="startTime", required)
+                    label(for="time") End Time:
+                    input(type="time", id="endTime", name="endTime", required)
+                    label(for="room") Room:
+                    select(id="room", name="room", required)
+                        if (!availableRooms)
+                            option(value="") No rooms available
+                        else
+                            each room in availableRooms
+                                option(value=room.id)= room.name + " - Capacity " + room.capacity
+                    br 
+                    label(for="comments") Comments:
+                    textarea#comments(name="comments", placeholder="Enter comments", rows="5", ) #{comment}
+                    div.button-container
+                        button.button(type="submit") Submit
+                        button.button.button-cancel(type="button") Cancel

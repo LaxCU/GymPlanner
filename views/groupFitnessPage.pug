@@ -1,0 +1,90 @@
+doctype html
+html(lang="en")
+  head
+    title Gym Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+  body
+    header
+      h1 Gym Dashboard
+    main
+      if (isAdmin)
+        button#createBooking.button Create New Booking
+
+      if(!isAdmin)
+        if (!userBookings)
+          h4 No Bookings found.
+        else
+          h2 Here are your bookings: 
+          .card-container
+              each groupClass in classes
+                if (userBookings.find(booking => booking.group_id == groupClass.group_id))
+                  div.card(id= groupClass.group_id)
+                      .card-header Booking Details 
+                      .card-content 
+                          p Date: #{groupClass.group_date.toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                          p Time: #{groupClass.start_time} - #{groupClass.end_time}
+                          p Trainer: #{groupClass.trainer_first_name} #{groupClass.trainer_last_name}
+                          p Duration: #{groupClass.duration} minutes
+                          p Comments: #{groupClass.group_comment}
+                      .card-actions 
+                          button.button.button-cancel(id= "removeButton_"+ groupClass.group_id) Remove Booking           
+      br
+      h2 Available Classes: 
+      .card-container
+          each groupClass in classes
+              if (!userBookings.find(booking => booking.group_id == groupClass.group_id))
+                div.card(id= groupClass.group_id)
+                    .card-header Class Details 
+                    .card-content 
+                        p Date: #{groupClass.group_date.toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        p Time: #{groupClass.start_time} - #{groupClass.end_time}
+                        p Trainer: #{groupClass.trainer_first_name} #{groupClass.trainer_last_name}
+                        p Duration: #{groupClass.duration} minutes
+                        p Comments: #{groupClass.group_comment}
+                    .card-actions 
+                        if(isAdmin)
+                            button.button(id= "editButton_"+groupClass.group_id) Edit
+                            button.button.button-cancel(id= "deleteButton_" + groupClass.group_id) Delete
+                        else
+                            button.button(id= "bookButton_"+groupClass.group_id) Book
+
+
+      div.overlay#Overlay
+        .overlay-content 
+            h2#overlaytitle Create your PT Session
+            form#trainingForm(action="/training", method="POST")
+                br
+                label(for="training_date") Date:
+                input(type="date", id="training_date", name="training_date", required)
+                label(for="time") Start Time:
+                input(type="time", id="start_time", name="start_time", required)
+                label(for="duration") Duration:
+                select(id="duration", name="duration", required)
+                    option(value=60, default)= "1 Hour"
+                    option(value=90)= "1 Hour 30 Minutes"
+                    option(value=120)= "2 Hour"
+                    option(value=180)= "2 Hour 30 Minutes"
+                    option(value=180)= "3 Hour"
+                    option(value=210)= "3 Hour 30 Minutes"
+                    option(value=240)= "4 Hour"
+                br
+                label(for="trainer") Trainer:
+                select(id="trainer_id", name="trainer_id", required)
+                    if (!trainers)
+                        option(value="") No trainers available
+                    else
+                        each trainer in trainers
+                            option(value=trainer.trainer_id)= trainer.first_name + " " + trainer.last_name
+                br
+                label(for="training_comment") Comments:
+                textarea#training_comment(name="training_comment", placeholder="Enter comments", rows="5", )
+                div.button-container
+                    button.button(type="submit") Submit
+                    button.button.button-cancel#cancelButton(type="button") Cancel
+      
+    script. 
+        const bookingsData = !{JSON.stringify(bookings)}; 
+        const trainersData = !{JSON.stringify(trainers)};
+    script(src='../client/groupFitness.js')
+    footer
+      p © 2024 Fitness Club. All rights reserved.

@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    title Dashboard
+    link(rel='stylesheet', href='/styles/dashboard.css')
+    script.
+      function loadContent(url) {
+        fetch(url)
+          .then(response => response.text())
+          .then(data => document.getElementById('content').innerHTML = data)
+          .catch(error => console.error('Error loading content:', error));
+      }
+  body
+    header
+      h1 Hi #{user.first_name } <!-- Display user's name -->
+      div.header-buttons
+        a(href='javascript:void(0)', onclick="loadContent('/profile')") Profile
+        a(href='/logout') Logout <!-- Logout link -->
+    main
+      h3 Welcome to you Fitness Dashboard
+      p
+      nav
+        ul
+          li
+            a(href='javascript:void(0)', onclick="loadContent('/metrics')") Metrics  
+          li
+            a(href='javascript:void(0)', onclick="loadContent('/Goals')") Goals
+          li
+            a(href='javascript:void(0)', onclick="loadContent('/bookings')") Bookings
+          li
+            a(href='javascript:void(0)', onclick="loadContent('/routines')") Routines
+          li
+            a(href='javascript:void(0)', onclick="loadContent('/achievements')") Achievements
+      br
+      div#content
+        // Content will be dynamically loaded here
+    footer
+      p © 2024 Fitness Club. All rights reserved.
+
+

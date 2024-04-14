@@ -1,0 +1,88 @@
+//- doctype html
+//- html(lang="en")
+//-   head
+//-     meta(charset="UTF-8")
+//-     meta(name="viewport", content="width=device-width, initial-scale=1.0")
+//-     title Set Available Time
+//-     link(rel="stylesheet", href="styles.css")
+//-   body
+//-     .container
+//-       h1 Set Available Time
+//-       form#availability-form(action="/set-availability", method="POST")
+//-         label(for="date") Date:
+//-         input(type="date", id="date", name="date", required)
+//-         label(for="start-time") Start Time:
+//-         input(type="time", id="start-time", name="start-time", required)
+//-         label(for="end-time") End Time:
+//-         input(type="time", id="end-time", name="end-time", required)
+//-         button(type="submit") Set Availability
+
+//-     script(src="scripts.js")
+
+doctype html
+html(lang="en")
+  head
+    title Active Goals
+    link(rel='stylesheet', href='/styles/goals.css')
+  body
+    header
+      h1 Active Goals
+    main
+      if !activeGoals || activeGoals.length === 0
+        li No active goals
+      else
+        each goal in activeGoals
+          li #{goal}
+      h2 Select Goal Type
+      form(action="/submitGoal", method="POST")
+        input(type="radio", id="freeform", name="goalType", value="freeform" onchange="toggleGoalInput()")
+        label(for="freeform") Freeform
+        br
+        input(type="radio", id="metrics", name="goalType", value="metrics" onchange="toggleGoalInput()")
+        label(for="metrics") Metrics
+        br
+        div#goalInputContainer
+          //- Textbox for freeform goal input
+          input(type="text", id="freeformInput", name="freeformGoal", placeholder="Enter freeform goal", style={display: "none"})
+          //- Form for metrics-based goal input
+          form#metricsForm(action="/submitMetricsGoal", method="POST", style={display: "none"})
+            label(for="weight") Weight:
+            input(type="number", id="weight", name="weight")
+            br
+            label(for="bodyFat") Body Fat:
+            input(type="number", id="bodyFat", name="bodyFat")
+            br
+            label(for="muscleMass") Muscle Mass:
+            input(type="number", id="muscleMass", name="muscleMass")
+            br
+            label(for="heartRate") Heart Rate:
+            input(type="number", id="heartRate", name="heartRate")
+            br
+            label(for="bloodPressure") Blood Pressure:
+            input(type="number", id="bloodPressure", name="bloodPressure")
+            br
+            button(type="submit") Submit Metrics Goal
+    footer
+      p © 2024 Fitness Club. All rights reserved.
+
+script.
+  function toggleGoalInput() {
+    var freeformInput = document.getElementById("freeformInput");
+    var metricsForm = document.getElementById("metricsForm");
+    var freeformRadio = document.getElementById("freeform");
+    var metricsRadio = document.getElementById("metrics");
+    
+    if (freeformRadio.checked) {
+      freeformInput.style.display = "block";
+      metricsForm.style.display = "none";
+    } else if (metricsRadio.checked) {
+      freeformInput.style.display = "none";
+      metricsForm.style.display = "block";
+    }
+  }
+
+
+
+
+
+
